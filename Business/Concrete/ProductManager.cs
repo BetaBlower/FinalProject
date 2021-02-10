@@ -5,6 +5,7 @@ using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Core.Utilities.Results;
 
 namespace Business.Concrete
 {
@@ -37,6 +38,21 @@ namespace Business.Concrete
         public List<ProductDetailDto> GetProductDetails()
         {
             return _productDal.GetProductDetails();
+        }
+
+        public IResult Add(Product product)
+        {
+            if (product.ProductName.Length<2)
+            {
+                return new ErrorResult("Ürün ismi min 2 karakter olmalıdır");
+            }
+             _productDal.Add(product);
+             return new SuccessResult("Ürün Eklendi");
+        }
+
+        public Product GetById(int Id)
+        {
+           return _productDal.Get(p=> p.ProductId == Id);
         }
     }
 }

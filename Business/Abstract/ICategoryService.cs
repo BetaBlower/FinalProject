@@ -9,5 +9,6 @@ namespace Business.Abstract
     {
         List<Category> GetAll();
         Category GetById(int categoryId);
+        
     }
 }
