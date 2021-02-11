@@ -10,7 +10,8 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            ProductTest();
+           ProductTest();
+
         }
 
         private static void CategoryTest()
@@ -26,12 +27,25 @@ namespace ConsoleUI
         {
             ProductManager productManager = new ProductManager(new EfProductDal());
 
-            foreach (var product in productManager.GetProductDetails())
+            var result = productManager.GetProductDetails();
+            
+
+            if (result.Success==true)
             {
-                Console.WriteLine("{0} / {1}",product.ProductName,product.CategoryName);
-                //Console.Write(" fiyatı = "+product.UnitPrice);
-                //Console.WriteLine(" stoktaki adedi = "+product.UnitsInStock + "\n");
+                foreach (var product in result.Data)
+                {
+
+                    Console.WriteLine("{0} / {1}", product.ProductName, product.CategoryName);
+                    Console.Write(" fiyatı = " + product.UnitPrice);
+                    Console.WriteLine(" stoktaki adedi = " + product.UnitsInStock + "\n");
+                }
+                Console.WriteLine(result.Message);
             }
+            else
+            {
+                Console.WriteLine(result.Message);
+            }
+           
         }
     }
 }
