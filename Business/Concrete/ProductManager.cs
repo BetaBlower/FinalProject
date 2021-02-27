@@ -14,6 +14,7 @@ using Core.Aspects.Autofac.Validation;
 using System.Linq;
 using Core.Utilities.Business;
 using DataAccess.Concrete.EntityFramework;
+using Business.BusinessAspect.Autofac;
 
 namespace Business.Concrete
 {
@@ -55,6 +56,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetails());
         }
 
+        [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
