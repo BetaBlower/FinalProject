@@ -15,6 +15,9 @@ using System.Linq;
 using Core.Utilities.Business;
 using DataAccess.Concrete.EntityFramework;
 using Business.BusinessAspect.Autofac;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Transaction;
+using Core.Aspects.Autofac.Performance;
 
 namespace Business.Concrete
 {
@@ -32,12 +35,14 @@ namespace Business.Concrete
         #endregion
 
         #region Metods
+
+        [CacheAspect]
         public IDataResult<List<Product>> GetAll()
         {
-            if (DateTime.Now.Hour == 1)
-            {
-                return new ErrorDataResult<List<Product>>(null,Messages.MaintenanceTime);
-            }
+            //if (DateTime.Now.Hour == 1)
+            //{
+            //    return new ErrorDataResult<List<Product>>(null,Messages.MaintenanceTime);
+            //}
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(),Messages.ProductsListed);
         }
 
@@ -58,6 +63,7 @@ namespace Business.Concrete
 
         [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
         {
 
@@ -73,12 +79,13 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductAdded);
            
         }
-
+        [CacheAspect]
+        [PerformanceAspect(5)]
         public IDataResult<Product> GetById(int Id)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == Id),Messages.ProductsListed);
         }
-
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Uppdate(Product product)
         {
            
@@ -122,6 +129,11 @@ namespace Business.Concrete
                 return new SuccessResult();
             }
             return new ErrorResult();
+        }
+        [TransactionScopeAspect]
+        public IResult AddTransactionalTest(Product product)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 
